@@ -45,6 +45,19 @@ https://support.hostinger.com/en/articles/1583694-is-symlink-function-enabled
 
 To make the symlink function work, please remove it from the list. You can check from PHP Configuration > PHP option > disableFunctions > Remove Symlink.
 ```
+
+
+Verify the Certificate File Path
+
+```
+ls -l storage/app/certificates/certificates.p12
+```
+
+Check its permissions:
+```
+chmod 644 storage/app/certificates/certificates.p12
+```
+
 ## API Documentation
 https://documenter.getpostman.com/view/16911064/2s93sZ5tfG#e3a68a5b-8492-4683-bcaf-5166f38eae80
 

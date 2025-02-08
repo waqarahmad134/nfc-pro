@@ -540,8 +540,17 @@ class UserController extends Controller
      */
     public function generate_apple_pass(array $pass_data): string
     {
-        $pass = new PKPass(storage_path('app/certificates/certificates.p12'), '12341234');
+        // $pass = new PKPass(storage_path('app/certificates/certificates.p12'), '12341234');
         // Pass content
+        // $pass = new PKPass(storage_path('app/certificates/certificates.p12'), '12341234');
+        // Pass content
+        $certPath = base_path('storage/app/certificates/certificates.p12');
+        $pass = new PKPass($certPath, '12341234');
+
+        if (!file_exists($certPath)) {
+            return response()->json(['error' => 'Certificate file not found at: ' . $certPath], 500);
+        }
+        
         $data = [
             "formatVersion" => 1,
             "passTypeIdentifier" => "pass.com.saudi360.ewalletPassNew",
