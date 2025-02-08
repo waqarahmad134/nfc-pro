@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link rel="icon" href="{{asset('public/assets/images/logo-dark-webp')}}" type="image/x-icon">
+    <link rel="icon" href="{{asset('public/assets/images/logo.webp')}}" type="image/x-icon">
     <!-- VENDOR CSS -->
     <link rel="stylesheet" href="{{asset('public/assets/vendor/bootstrap/css/bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{asset('public/assets/vendor/font-awesome/css/font-awesome.min.css')}}">
@@ -65,7 +65,7 @@
     <div class="page-loader-wrapper">
         <div class="loader">
             <div class="m-t-30">
-                <img class="img-fluid rounded" src="{{asset('public/assets/images/logo-dark.webp')}}" alt="{{env('APP_TITLE')}} Logo" class="img-fluid" width="200_skins">
+                <img class="img-fluid rounded" src="{{asset('public/assets/images/logo.webp')}}" alt="{{env('APP_TITLE')}} Logo" class="img-fluid" width="200_skins">
             </div>
             <p>Please wait...</p>
         </div>
@@ -96,7 +96,7 @@
             <div class="sidebar-scroll">
                 <div class="user-account">
                     <div>
-                        <img class="img-fluid" src="{{asset('public/assets/images/logo-dark.webp')}}" alt="{{env('APP_TITLE')}}">
+                        <img class="img-fluid" src="{{asset('public/assets/images/logo.webp')}}" alt="{{env('APP_TITLE')}}">
                     </div>
                 </div>
                 <nav id="left-sidebar-nav" class="sidebar-nav">
