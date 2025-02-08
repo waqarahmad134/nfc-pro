@@ -28,6 +28,23 @@
 ```
     php artisan storage:link
 ```
+
+or
+```
+rm public/storage     || rm -rf public/storage
+
+php artisan storage:link
+```
+
+
+To chk which functions is not enable in php.ini file 
+```
+php -i | grep disable_functions
+
+https://support.hostinger.com/en/articles/1583694-is-symlink-function-enabled
+
+To make the symlink function work, please remove it from the list. You can check from PHP Configuration > PHP option > disableFunctions > Remove Symlink.
+```
 ## API Documentation
 https://documenter.getpostman.com/view/16911064/2s93sZ5tfG#e3a68a5b-8492-4683-bcaf-5166f38eae80
 
