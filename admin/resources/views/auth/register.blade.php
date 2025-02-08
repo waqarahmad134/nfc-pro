@@ -74,7 +74,7 @@
                                     <label for="signup-password" class="control-label sr-only">Password</label>
                                     <input name="password" type="password" class="form-control" id="signup-password" placeholder="Password">
                                 </div>
-                                <button onclick="register()" type="submit" class="btn btn-primary btn-lg btn-block" style="background-color: #000000; border-color: #000000;">REGISTER</button>
+                                <button onclick="register()" type="submit" class="btn btn-primary btn-lg btn-block" style="background-color: {{ env('THEME_PRIMARY_COLOR', '#000000') }}; border-color: {{ env('THEME_PRIMARY_COLOR', '#000000') }};">REGISTER</button>
                             </form>
                         </div>
                     </div>

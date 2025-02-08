@@ -1,6 +1,17 @@
 @extends('welcome')
 @section('content')
 
+
+<style>
+    .card {
+        background-color: {{ env('THEME_PRIMARY_COLOR', '#000000') }};
+        color: white;
+        border-radius: 8px;
+        border-color: {{ env('THEME_PRIMARY_COLOR', '#000000') }};
+    }
+</style>
+
+
 <div id="main-content">
     <div class="block-header">
         <div class="row clearfix">
@@ -10,7 +21,7 @@
             <div class="col-md-6 col-sm-12 text-right">
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{route('home')}}"><i class="icon-home"></i></a></li>
-                    <li class="breadcrumb-item">Dashboard  </li>
+                    <li class="breadcrumb-item">Dashboard </li>
                 </ul>
             </div>
         </div>
@@ -19,7 +30,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-3 col-lg-3">
-                <div class="card shadow-lg" style="background-color: #000000; color: white; border-radius: 8px; border-color: #000000;">
+                <div class="card shadow-lg">
                     <div class="card-body">
                         <h5 class="card-title">Super Admin</h5>
                         <h4 class="card-text" id="super-admin"></h4>
@@ -27,7 +38,7 @@
                 </div>
             </div>
             <div class="col-md-3 col-lg-3">
-                <div class="card shadow-lg" style="background-color: #000000; color: white; border-radius: 8px; border-color: #000000;">
+                <div class="card shadow-lg">
                     <div class="card-body">
                         <h5 class="card-title">Sub Admin</h5>
                         <h4 class="card-text" id="sub-admin"></h4>
@@ -35,7 +46,7 @@
                 </div>
             </div>
             <div class="col-md-3 col-lg-3">
-                <div class="card shadow-lg" style="background-color: #000000; color: white; border-radius: 8px; border-color: #000000;">
+                <div class="card shadow-lg">
                     <div class="card-body">
                         <h5 class="card-title">Employee's</h5>
                         <h4 class="card-text" id="employees"></h4>
@@ -43,7 +54,7 @@
                 </div>
             </div>
             <div class="col-md-3 col-lg-3">
-                <div class="card shadow-lg" style="background-color: #000000; color: white; border-radius: 8px; border-color: #000000;">
+                <div class="card shadow-lg">
                     <div class="card-body">
                         <h5 class="card-title">All Users</h5>
                         <h4 class="card-text" id="all-users">{{$data->Response->totalBookings ?? ''}}</h4>
@@ -54,7 +65,7 @@
     </div>
 </div>
 @php
-    $jsonData = json_encode($data);
+$jsonData = json_encode($data);
 @endphp
 
 <script>
@@ -70,7 +81,6 @@
     $("#employees").text(employeeCount);
 
     $("#all-users").text(data.length);
-    
 </script>
 
 @endsection

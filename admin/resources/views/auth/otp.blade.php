@@ -73,7 +73,7 @@
                                     <label for="signin-password" class="control-label sr-only">Password</label>
                                     <input name="password" type="password" class="form-control" id="signin-password" value="" placeholder="Password" required>
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-lg btn-block" style="background-color: #000000; border-color: #000000;">Submit</button>
+                                <button type="submit" class="btn btn-primary btn-lg btn-block" style="background-color: {{ env('THEME_PRIMARY_COLOR', '#000000') }}; border-color: {{ env('THEME_PRIMARY_COLOR', '#000000') }};">Submit</button>
                             </form>
                         </div>
                     </div>

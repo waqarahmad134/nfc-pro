@@ -69,12 +69,10 @@
                                     <label for="signin-password" class="control-label sr-only">Password</label>
                                     <input name="password" type="password" class="form-control" id="signin-password" value="" placeholder="Password" required>
                                 </div>
-
-
-                                <button type="submit" class="btn btn-primary btn-lg btn-block" style="background-color: #000000; border-color: #000000;">LOGIN</button>
+                                <button type="submit" class="btn btn-primary btn-lg btn-block" style="background-color: {{ env('THEME_PRIMARY_COLOR', '#000000') }}; border-color: {{ env('THEME_PRIMARY_COLOR', '#000000') }};">LOGIN</button>
                                 <div class="bottom">
-                                    <span class="helper-text m-b-10"><i class="fa fa-lock"></i><a href="#" style="color: black;"> Forgot password?</a></span>
-                                    <span>Login as &nbsp;<a href="{{ route('home') }}" style="color: blue;">Super Admin Login</a></span>
+                                    <span class="helper-text m-b-10"><i class="fa fa-lock"></i><a href="#" style="color: {{ env('THEME_PRIMARY_COLOR', '#000000') }};"> Forgot password?</a></span>
+                                    <span>Login as &nbsp;<a href="{{ route('home') }}" style="color: {{ env('THEME_PRIMARY_COLOR', '#000000') }};">Super Admin Login</a></span>
                                 </div>
                             </form>
                         </div>

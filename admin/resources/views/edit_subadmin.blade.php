@@ -4,11 +4,10 @@
 <div id="main-content">
     <div class="block-header">
         <div class="row clearfix">
-           
+
         </div>
     </div>
     <div class="container-fluid">
-
         <div class="row clearfix">
             <div class="col-lg-12">
                 <div class="card">
@@ -19,9 +18,9 @@
                             <li><a href="javascript:void(0);" class="full-screen"><i class="icon-size-fullscreen"></i></a></li>
                         </ul>
                     </div>
-                    <form method="POST"  id="addproduct" enctype="multipart/form-data">
+                    <form method="POST" id="addproduct" enctype="multipart/form-data">
                         @csrf
-                                    <input name="id" type="hidden" class="form-control" placeholder="Enter First Name Here" value="{{$data->id}}" required>
+                        <input name="id" type="hidden" class="form-control" placeholder="Enter First Name Here" value="{{$data->id}}" required>
                         <div class="px-5">
                             <h3>Main Info</h3>
                             <div class="row">
@@ -57,18 +56,18 @@
                             <div class="row mt-3">
                                 <div class="col-md-12 col-lg-12">
                                     <label>Address</label>
-                                    <input id="address" name="address" type="text" class="form-control" value="{{$data->address}}"  />
+                                    <input id="address" name="address" type="text" class="form-control" value="{{$data->address}}" />
                                     <div id='map' class="d-none"></div>
                                 </div>
                             </div>
                             <div class="row mt-3">
                                 <div class="col-md-6 col-lg-6">
                                     <label>Mobile Number</label>
-                                    <input name="mobile_number" type="text" class="form-control" placeholder="Mobile Number" value="{{$data->mobile_number}}"  required>
+                                    <input name="mobile_number" type="text" class="form-control" placeholder="Mobile Number" value="{{$data->mobile_number}}" required>
                                 </div>
                                 <div class="col-md-6 col-lg-6">
                                     <label>Telephone Number</label>
-                                    <input name="telephone_number" type="text" class="form-control" placeholder="Telephone Number" value="{{$data->telephone_number}}"  required>
+                                    <input name="telephone_number" type="text" class="form-control" placeholder="Telephone Number" value="{{$data->telephone_number}}" required>
                                 </div>
                             </div>
                             <div class="row mt-3">
@@ -78,7 +77,7 @@
                                 </div>
 
                             </div>
-                          
+
                             <h3>Optional Info</h3>
                             <div class="row">
                                 <div class="col-md-6 col-lg-6">
@@ -127,15 +126,14 @@
 </div>
 
 <script>
-
-$('#addproduct').on('submit', (function(e) {
+    $('#addproduct').on('submit', (function(e) {
         e.preventDefault();
-       var token = "{{ session('token') }}";
+        var token = "{{ session('token') }}";
         var formData = new FormData(e.target);
         console.log(formData);
-            var headers = {
-                'Authorization': 'Bearer ' + token
-            };
+        var headers = {
+            'Authorization': 'Bearer ' + token
+        };
         $.ajax({
             type: 'POST',
             url: "{{env('APP_URL_API')}}api/user/update",

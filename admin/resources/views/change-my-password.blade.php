@@ -4,11 +4,10 @@
 <div id="main-content">
     <div class="block-header">
         <div class="row clearfix">
-           
+
         </div>
     </div>
     <div class="container-fluid">
-
         <div class="row clearfix">
             <div class="col-lg-12">
                 <div class="card">
@@ -19,7 +18,7 @@
                             <li><a href="javascript:void(0);" class="full-screen"><i class="icon-size-fullscreen"></i></a></li>
                         </ul>
                     </div>
-                    <form method="POST"  id="addproduct" enctype="multipart/form-data">
+                    <form method="POST" id="addproduct" enctype="multipart/form-data">
                         @csrf
                         <div class="px-5">
                             <div class="row">
@@ -32,7 +31,7 @@
                                     <input name="new_password" type="password" class="form-control" placeholder="Enter your new password here" required>
                                 </div>
                             </div>
-                            <input type="submit" href="#" class="btn mt-3 mb-3 float-right" style="background-color: #002E63; color: white;" value="Change" />
+                            <input type="submit" href="#" class="btn mt-3 mb-3 float-right" style="background-color: {{ env('THEME_PRIMARY_COLOR', '#000000') }}; color: white;" value="Change" />
                         </div>
                     </form>
                 </div>
@@ -42,14 +41,13 @@
 </div>
 
 <script>
-
-$('#addproduct').on('submit', (function(e) {
+    $('#addproduct').on('submit', (function(e) {
         e.preventDefault();
         var token = "{{ session('token') }}";
-        var formData = new FormData(e.target); 
+        var formData = new FormData(e.target);
         console.log(formData);
         var headers = {
-                'Authorization': 'Bearer ' + token
+            'Authorization': 'Bearer ' + token
         };
         $.ajax({
             type: 'POST',
