@@ -58,6 +58,13 @@ Check its permissions:
 chmod 644 storage/app/certificates/certificates.p12
 ```
 
+If facing this issue 
+cURL error 6: Could not resolve host laravel
+then 
+```
+composer dump-autoload
+```
+
 ## API Documentation
 https://documenter.getpostman.com/view/16911064/2s93sZ5tfG#e3a68a5b-8492-4683-bcaf-5166f38eae80
 
