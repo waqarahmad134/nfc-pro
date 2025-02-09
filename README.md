@@ -1,6 +1,10 @@
 # Bank NFC
 
 ## How to install
+
+0. ForPasses we need php 8.1 only
+
+
 1. Install or update composer
 ```
     composer install

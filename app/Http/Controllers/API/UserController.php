@@ -547,6 +547,12 @@ class UserController extends Controller
         $certPath = base_path('storage/app/certificates/certificates.p12');
         $pass = new PKPass($certPath, '12341234');
 
+        // if (is_readable($certPath)) {
+        //     echo 'The file is readable';
+        // } else {
+        //     echo 'The file is not readable';
+        // }
+
         if (!file_exists($certPath)) {
             return response()->json(['error' => 'Certificate file not found at: ' . $certPath], 500);
         }

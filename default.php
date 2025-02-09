@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
+    <head>UeGgce89UtHKx^LCc%YT
         <title>Default page || UeGgce89UtHKx^LCc%YT</title>
         <link rel="icon" type="image/x-icon" href="https://hpanel.hostinger.com/favicons/hostinger.png">
         <meta charset="utf-8">

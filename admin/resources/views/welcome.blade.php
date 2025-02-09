@@ -32,37 +32,46 @@
     .theme-orange .navbar-fixed-top {
         background: #00072D;
     }
-    .dropdown-item{
-        padding:0px;
-    }
-    .dropdown-menu>li>a, .dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus{
-            padding: 0.25rem 1.5rem;
-    }
-    .dropdown-menu>li>a{
-        width:100%;
-        display:block;
+
+    .dropdown-item {
+        padding: 0px;
     }
 
-.dropdown-item.active, .dropdown-item:active {
-    color: #fff;
-    text-decoration: none;
-    background-color: transparent !important;
-}
-.theme-orange #left-sidebar{
-    background:#000000 !important;
-}
-.theme-orange .page-loader-wrapper{
-    background:#fc3a52 !important;
-}
-.theme-orange .navbar-fixed-top{
-    background:#000000 !important;
-}
+    .dropdown-menu>li>a,
+    .dropdown-menu>li>a:hover,
+    .dropdown-menu>li>a:focus {
+        padding: 0.25rem 1.5rem;
+    }
+
+    .dropdown-menu>li>a {
+        width: 100%;
+        display: block;
+    }
+
+    .dropdown-item.active,
+    .dropdown-item:active {
+        color: #fff;
+        text-decoration: none;
+        background-color: transparent !important;
+    }
+
+    .theme-orange #left-sidebar {
+        background: #000000 !important;
+    }
+
+    .theme-orange .page-loader-wrapper {
+        background: #fc3a52 !important;
+    }
+
+    .theme-orange .navbar-fixed-top {
+        background: #000000 !important;
+    }
 </style>
 
 
 <body class="theme-orange">
     <!-- Page Loader -->
-    <div class="page-loader-wrapper">
+    <div class="page-loader-wrapper" style="background : {{ env('THEME_PRIMARY_COLO', '#000000') }} !important;">
         <div class="loader">
             <div class="m-t-30">
                 <img class="img-fluid rounded" src="{{asset('public/assets/images/logo.webp')}}" alt="{{env('APP_TITLE')}} Logo" class="img-fluid" width="200_skins">
@@ -112,17 +121,17 @@
                             <a href="{{route('add_sub_admin')}}"><i class="fa fa-user"></i><span>Add Sub Admin</span></a>
                         </li>
                         @endif
-                          @if(session()->get('role') == 'subadmin')
-                            <li class="@if(\Request::route()->getName() == 'employee_users') active  @endif">
-                                <a href="{{route('employee_users')}}"><i class="fa fa-users" aria-hidden="true"></i><span>List Users</span></a>
-                            </li>
-                            <li class="@if(\Request::route()->getName() == 'csv') active  @endif">
-                                <a href="{{route('csv')}}"><i class="fa fa-user"></i><span>Add CSV</span></a>
-                            </li>
-                            <li class="@if(\Request::route()->getName() == 'add_user') active  @endif">
-                                <a href="{{route('add_user')}}"><i class="fa fa-user"></i><span>Add New User</span></a>
-                            </li>
-                           @endif
+                        @if(session()->get('role') == 'subadmin')
+                        <li class="@if(\Request::route()->getName() == 'employee_users') active  @endif">
+                            <a href="{{route('employee_users')}}"><i class="fa fa-users" aria-hidden="true"></i><span>List Users</span></a>
+                        </li>
+                        <li class="@if(\Request::route()->getName() == 'csv') active  @endif">
+                            <a href="{{route('csv')}}"><i class="fa fa-user"></i><span>Add CSV</span></a>
+                        </li>
+                        <li class="@if(\Request::route()->getName() == 'add_user') active  @endif">
+                            <a href="{{route('add_user')}}"><i class="fa fa-user"></i><span>Add New User</span></a>
+                        </li>
+                        @endif
                         <li class="@if(\Request::route()->getName() == 'change-my-password') active  @endif">
                             <a href="{{ route('change-my-password') }}"><i class="fa fa-cog"></i><span>Change Password</span></a>
                         </li>
