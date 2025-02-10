@@ -21,7 +21,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Translation\Provider\FilteringProvider;
 use Symfony\Component\Translation\Provider\TranslationProviderCollection;
 use Symfony\Component\Translation\Reader\TranslationReaderInterface;
 use Symfony\Component\Translation\TranslatorBag;
@@ -34,8 +33,8 @@ final class TranslationPushCommand extends Command
 {
     use TranslationTrait;
 
-    private TranslationProviderCollection $providers;
-    private TranslationReaderInterface $reader;
+    private $providers;
+    private $reader;
     private array $transPaths;
     private array $enabledLocales;
 
@@ -73,7 +72,10 @@ final class TranslationPushCommand extends Command
         }
     }
 
-    protected function configure(): void
+    /**
+     * {@inheritdoc}
+     */
+    protected function configure()
     {
         $keys = $this->providers->keys();
         $defaultProvider = 1 === \count($keys) ? $keys[0] : null;
@@ -110,12 +112,15 @@ EOF
         ;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $provider = $this->providers->get($input->getArgument('provider'));
 
         if (!$this->enabledLocales) {
-            throw new InvalidArgumentException(sprintf('You must define "framework.enabled_locales" or "framework.translator.providers.%s.locales" config key in order to work with translation providers.', parse_url($provider, \PHP_URL_SCHEME)));
+            throw new InvalidArgumentException(sprintf('You must define "framework.translator.enabled_locales" or "framework.translator.providers.%s.locales" config key in order to work with translation providers.', parse_url($provider, \PHP_URL_SCHEME)));
         }
 
         $io = new SymfonyStyle($input, $output);
@@ -124,12 +129,6 @@ EOF
         $force = $input->getOption('force');
         $deleteMissing = $input->getOption('delete-missing');
 
-        if (!$domains && $provider instanceof FilteringProvider) {
-            $domains = $provider->getDomains();
-        }
-
-        // Reading local translations must be done after retrieving the domains from the provider
-        // in order to manage only translations from configured domains
         $localTranslations = $this->readLocalTranslations($locales, $domains, $this->transPaths);
 
         if (!$domains) {

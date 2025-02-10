@@ -18,7 +18,7 @@ use Nette;
 class ValidationException extends Nette\InvalidStateException
 {
 	/** @var Message[] */
-	private array $messages;
+	private $messages;
 
 
 	/**
@@ -40,7 +40,6 @@ class ValidationException extends Nette\InvalidStateException
 		foreach ($this->messages as $message) {
 			$res[] = $message->toString();
 		}
-
 		return $res;
 	}
 

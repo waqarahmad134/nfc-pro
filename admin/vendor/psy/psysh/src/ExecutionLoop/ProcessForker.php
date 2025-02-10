@@ -3,7 +3,7 @@
 /*
  * This file is part of Psy Shell.
  *
- * (c) 2012-2023 Justin Hileman
+ * (c) 2012-2020 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -23,11 +23,10 @@ use Psy\Shell;
  */
 class ProcessForker extends AbstractListener
 {
-    private ?int $savegame = null;
-    /** @var resource */
+    private $savegame;
     private $up;
 
-    private const PCNTL_FUNCTIONS = [
+    private static $pcntlFunctions = [
         'pcntl_fork',
         'pcntl_signal_dispatch',
         'pcntl_signal',
@@ -35,13 +34,15 @@ class ProcessForker extends AbstractListener
         'pcntl_wexitstatus',
     ];
 
-    private const POSIX_FUNCTIONS = [
+    private static $posixFunctions = [
         'posix_getpid',
         'posix_kill',
     ];
 
     /**
      * Process forker is supported if pcntl and posix extensions are available.
+     *
+     * @return bool
      */
     public static function isSupported(): bool
     {
@@ -53,7 +54,7 @@ class ProcessForker extends AbstractListener
      */
     public static function isPcntlSupported(): bool
     {
-        foreach (self::PCNTL_FUNCTIONS as $func) {
+        foreach (self::$pcntlFunctions as $func) {
             if (!\function_exists($func)) {
                 return false;
             }
@@ -67,7 +68,7 @@ class ProcessForker extends AbstractListener
      */
     public static function disabledPcntlFunctions()
     {
-        return self::checkDisabledFunctions(self::PCNTL_FUNCTIONS);
+        return self::checkDisabledFunctions(self::$pcntlFunctions);
     }
 
     /**
@@ -75,7 +76,7 @@ class ProcessForker extends AbstractListener
      */
     public static function isPosixSupported(): bool
     {
-        foreach (self::POSIX_FUNCTIONS as $func) {
+        foreach (self::$posixFunctions as $func) {
             if (!\function_exists($func)) {
                 return false;
             }
@@ -89,7 +90,7 @@ class ProcessForker extends AbstractListener
      */
     public static function disabledPosixFunctions()
     {
-        return self::checkDisabledFunctions(self::POSIX_FUNCTIONS);
+        return self::checkDisabledFunctions(self::$posixFunctions);
     }
 
     private static function checkDisabledFunctions(array $functions): array
@@ -98,7 +99,7 @@ class ProcessForker extends AbstractListener
     }
 
     /**
-     * Forks into a main and a loop process.
+     * Forks into a master and a loop process.
      *
      * The loop process will handle the evaluation of all instructions, then
      * return its state via a socket upon completion.
@@ -249,6 +250,8 @@ class ProcessForker extends AbstractListener
      * we can.
      *
      * @param array $return
+     *
+     * @return string
      */
     private function serializeReturn(array $return): string
     {
@@ -263,14 +266,6 @@ class ProcessForker extends AbstractListener
             // Resources and Closures don't error, but they don't serialize well either.
             if (\is_resource($value) || $value instanceof \Closure) {
                 continue;
-            }
-
-            if (\version_compare(\PHP_VERSION, '8.1', '>=') && $value instanceof \UnitEnum) {
-                // Enums defined in the REPL session can't be unserialized.
-                $ref = new \ReflectionObject($value);
-                if (\strpos($ref->getFileName(), ": eval()'d code") !== false) {
-                    continue;
-                }
             }
 
             try {

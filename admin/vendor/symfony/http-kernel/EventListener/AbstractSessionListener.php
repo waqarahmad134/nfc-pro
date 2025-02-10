@@ -35,37 +35,29 @@ use Symfony\Contracts\Service\ResetInterface;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  * @author Tobias Schultze <http://tobion.de>
+ *
+ * @internal
  */
 abstract class AbstractSessionListener implements EventSubscriberInterface, ResetInterface
 {
     public const NO_AUTO_CACHE_CONTROL_HEADER = 'Symfony-Session-NoAutoCacheControl';
 
-    /**
-     * @internal
-     */
-    protected ?ContainerInterface $container;
-
+    protected $container;
     private bool $debug;
 
     /**
      * @var array<string, mixed>
      */
-    private array $sessionOptions;
+    private $sessionOptions;
 
-    /**
-     * @internal
-     */
-    public function __construct(?ContainerInterface $container = null, bool $debug = false, array $sessionOptions = [])
+    public function __construct(ContainerInterface $container = null, bool $debug = false, array $sessionOptions = [])
     {
         $this->container = $container;
         $this->debug = $debug;
         $this->sessionOptions = $sessionOptions;
     }
 
-    /**
-     * @internal
-     */
-    public function onKernelRequest(RequestEvent $event): void
+    public function onKernelRequest(RequestEvent $event)
     {
         if (!$event->isMainRequest()) {
             return;
@@ -73,24 +65,22 @@ abstract class AbstractSessionListener implements EventSubscriberInterface, Rese
 
         $request = $event->getRequest();
         if (!$request->hasSession()) {
-            $request->setSessionFactory(function () use ($request) {
-                // Prevent calling `$this->getSession()` twice in case the Request (and the below factory) is cloned
-                static $sess;
-
+            // This variable prevents calling `$this->getSession()` twice in case the Request (and the below factory) is cloned
+            $sess = null;
+            $request->setSessionFactory(function () use (&$sess, $request) {
                 if (!$sess) {
                     $sess = $this->getSession();
-                    $request->setSession($sess);
+                }
 
-                    /*
-                     * For supporting sessions in php runtime with runners like roadrunner or swoole, the session
-                     * cookie needs to be read from the cookie bag and set on the session storage.
-                     *
-                     * Do not set it when a native php session is active.
-                     */
-                    if ($sess && !$sess->isStarted() && \PHP_SESSION_ACTIVE !== session_status()) {
-                        $sessionId = $sess->getId() ?: $request->cookies->get($sess->getName(), '');
-                        $sess->setId($sessionId);
-                    }
+                /*
+                 * For supporting sessions in php runtime with runners like roadrunner or swoole, the session
+                 * cookie needs to be read from the cookie bag and set on the session storage.
+                 *
+                 * Do not set it when a native php session is active.
+                 */
+                if ($sess && !$sess->isStarted() && \PHP_SESSION_ACTIVE !== session_status()) {
+                    $sessionId = $request->cookies->get($sess->getName(), '');
+                    $sess->setId($sessionId);
                 }
 
                 return $sess;
@@ -98,10 +88,7 @@ abstract class AbstractSessionListener implements EventSubscriberInterface, Rese
         }
     }
 
-    /**
-     * @internal
-     */
-    public function onKernelResponse(ResponseEvent $event): void
+    public function onKernelResponse(ResponseEvent $event)
     {
         if (!$event->isMainRequest() || (!$this->container->has('initialized_session') && !$event->getRequest()->hasSession())) {
             return;
@@ -156,50 +143,42 @@ abstract class AbstractSessionListener implements EventSubscriberInterface, Rese
             $sessionCookieSecure = $sessionOptions['cookie_secure'] ?? false;
             $sessionCookieHttpOnly = $sessionOptions['cookie_httponly'] ?? true;
             $sessionCookieSameSite = $sessionOptions['cookie_samesite'] ?? Cookie::SAMESITE_LAX;
-            $sessionUseCookies = $sessionOptions['use_cookies'] ?? true;
 
             SessionUtils::popSessionCookie($sessionName, $sessionId);
 
-            if ($sessionUseCookies) {
-                $request = $event->getRequest();
-                $requestSessionCookieId = $request->cookies->get($sessionName);
+            $request = $event->getRequest();
+            $requestSessionCookieId = $request->cookies->get($sessionName);
 
-                $isSessionEmpty = ($session instanceof Session ? $session->isEmpty() : !$session->all()) && empty($_SESSION); // checking $_SESSION to keep compatibility with native sessions
-                if ($requestSessionCookieId && $isSessionEmpty) {
-                    // PHP internally sets the session cookie value to "deleted" when setcookie() is called with empty string $value argument
-                    // which happens in \Symfony\Component\HttpFoundation\Session\Storage\Handler\AbstractSessionHandler::destroy
-                    // when the session gets invalidated (for example on logout) so we must handle this case here too
-                    // otherwise we would send two Set-Cookie headers back with the response
-                    SessionUtils::popSessionCookie($sessionName, 'deleted');
-                    $response->headers->clearCookie(
+            $isSessionEmpty = ($session instanceof Session ? $session->isEmpty() : empty($session->all())) && empty($_SESSION); // checking $_SESSION to keep compatibility with native sessions
+            if ($requestSessionCookieId && $isSessionEmpty) {
+                $response->headers->clearCookie(
+                    $sessionName,
+                    $sessionCookiePath,
+                    $sessionCookieDomain,
+                    $sessionCookieSecure,
+                    $sessionCookieHttpOnly,
+                    $sessionCookieSameSite
+                );
+            } elseif ($sessionId !== $requestSessionCookieId && !$isSessionEmpty) {
+                $expire = 0;
+                $lifetime = $sessionOptions['cookie_lifetime'] ?? null;
+                if ($lifetime) {
+                    $expire = time() + $lifetime;
+                }
+
+                $response->headers->setCookie(
+                    Cookie::create(
                         $sessionName,
+                        $sessionId,
+                        $expire,
                         $sessionCookiePath,
                         $sessionCookieDomain,
                         $sessionCookieSecure,
                         $sessionCookieHttpOnly,
+                        false,
                         $sessionCookieSameSite
-                    );
-                } elseif ($sessionId !== $requestSessionCookieId && !$isSessionEmpty) {
-                    $expire = 0;
-                    $lifetime = $sessionOptions['cookie_lifetime'] ?? null;
-                    if ($lifetime) {
-                        $expire = time() + $lifetime;
-                    }
-
-                    $response->headers->setCookie(
-                        Cookie::create(
-                            $sessionName,
-                            $sessionId,
-                            $expire,
-                            $sessionCookiePath,
-                            $sessionCookieDomain,
-                            $sessionCookieSecure,
-                            $sessionCookieHttpOnly,
-                            false,
-                            $sessionCookieSameSite
-                        )
-                    );
-                }
+                    )
+                );
             }
         }
 
@@ -208,11 +187,10 @@ abstract class AbstractSessionListener implements EventSubscriberInterface, Rese
         }
 
         if ($autoCacheControl) {
-            $maxAge = $response->headers->hasCacheControlDirective('public') ? 0 : (int) $response->getMaxAge();
             $response
-                ->setExpires(new \DateTimeImmutable('+'.$maxAge.' seconds'))
+                ->setExpires(new \DateTime())
                 ->setPrivate()
-                ->setMaxAge($maxAge)
+                ->setMaxAge(0)
                 ->headers->addCacheControlDirective('must-revalidate');
         }
 
@@ -229,20 +207,17 @@ abstract class AbstractSessionListener implements EventSubscriberInterface, Rese
         }
     }
 
-    /**
-     * @internal
-     */
     public function onSessionUsage(): void
     {
         if (!$this->debug) {
             return;
         }
 
-        if ($this->container?->has('session_collector')) {
+        if ($this->container && $this->container->has('session_collector')) {
             $this->container->get('session_collector')();
         }
 
-        if (!$requestStack = $this->container?->has('request_stack') ? $this->container->get('request_stack') : null) {
+        if (!$requestStack = $this->container && $this->container->has('request_stack') ? $this->container->get('request_stack') : null) {
             return;
         }
 
@@ -267,21 +242,15 @@ abstract class AbstractSessionListener implements EventSubscriberInterface, Rese
         throw new UnexpectedSessionUsageException('Session was used while the request was declared stateless.');
     }
 
-    /**
-     * @internal
-     */
     public static function getSubscribedEvents(): array
     {
         return [
             KernelEvents::REQUEST => ['onKernelRequest', 128],
-            // low priority to come after regular response listeners
+            // low priority to come after regular response listeners, but higher than StreamedResponseListener
             KernelEvents::RESPONSE => ['onKernelResponse', -1000],
         ];
     }
 
-    /**
-     * @internal
-     */
     public function reset(): void
     {
         if (\PHP_SESSION_ACTIVE === session_status()) {
@@ -298,8 +267,6 @@ abstract class AbstractSessionListener implements EventSubscriberInterface, Rese
 
     /**
      * Gets the session object.
-     *
-     * @internal
      */
     abstract protected function getSession(): ?SessionInterface;
 

@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of the Symfony package.
  *
@@ -43,9 +42,6 @@ class XmlReaderCaster
         \XMLReader::XML_DECLARATION => 'XML_DECLARATION',
     ];
 
-    /**
-     * @return array
-     */
     public static function castXmlReader(\XMLReader $reader, array $a, Stub $stub, bool $isNested)
     {
         try {
@@ -55,7 +51,7 @@ class XmlReaderCaster
                 'VALIDATE' => @$reader->getParserProperty(\XMLReader::VALIDATE),
                 'SUBST_ENTITIES' => @$reader->getParserProperty(\XMLReader::SUBST_ENTITIES),
             ];
-        } catch (\Error) {
+        } catch (\Error $e) {
             $properties = [
                 'LOADDTD' => false,
                 'DEFAULTATTRS' => false,
@@ -85,7 +81,6 @@ class XmlReaderCaster
             $info[$props]->cut = $count;
         }
 
-        $a = Caster::filter($a, Caster::EXCLUDE_UNINITIALIZED, [], $count);
         $info = Caster::filter($info, Caster::EXCLUDE_EMPTY, [], $count);
         // +2 because hasValue and hasAttributes are always filtered
         $stub->cut += $count + 2;

@@ -14,7 +14,8 @@ use function array_merge;
 use function str_replace;
 use function substr;
 use Countable;
-use SebastianBergmann\CodeCoverage\Util\Percentage;
+use SebastianBergmann\CodeCoverage\Percentage;
+use SebastianBergmann\LinesOfCode\LinesOfCode;
 
 /**
  * @internal This class is not covered by the backward compatibility promise for phpunit/php-code-coverage
@@ -46,7 +47,7 @@ abstract class AbstractNode implements Countable
      */
     private $id;
 
-    public function __construct(string $name, ?self $parent = null)
+    public function __construct(string $name, self $parent = null)
     {
         if (substr($name, -1) === DIRECTORY_SEPARATOR) {
             $name = substr($name, 0, -1);
@@ -218,10 +219,7 @@ abstract class AbstractNode implements Countable
 
     abstract public function functions(): array;
 
-    /**
-     * @psalm-return array{linesOfCode: int, commentLinesOfCode: int, nonCommentLinesOfCode: int}
-     */
-    abstract public function linesOfCode(): array;
+    abstract public function linesOfCode(): LinesOfCode;
 
     abstract public function numberOfExecutableLines(): int;
 

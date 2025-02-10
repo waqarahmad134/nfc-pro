@@ -13,8 +13,7 @@ namespace Symfony\Component\HttpFoundation\Session\Storage;
 
 /**
  * MockFileSessionStorage is used to mock sessions for
- * functional testing where you may need to persist session data
- * across separate PHP processes.
+ * functional testing when done in a single PHP process.
  *
  * No PHP session is actually started since a session can be initialized
  * and shutdown only once per PHP execution cycle and this class does
@@ -30,9 +29,11 @@ class MockFileSessionStorage extends MockArraySessionStorage
     /**
      * @param string|null $savePath Path of directory to save session files
      */
-    public function __construct(?string $savePath = null, string $name = 'MOCKSESSID', ?MetadataBag $metaBag = null)
+    public function __construct(string $savePath = null, string $name = 'MOCKSESSID', MetadataBag $metaBag = null)
     {
-        $savePath ??= sys_get_temp_dir();
+        if (null === $savePath) {
+            $savePath = sys_get_temp_dir();
+        }
 
         if (!is_dir($savePath) && !@mkdir($savePath, 0777, true) && !is_dir($savePath)) {
             throw new \RuntimeException(sprintf('Session Storage was not able to create directory "%s".', $savePath));
@@ -43,6 +44,9 @@ class MockFileSessionStorage extends MockArraySessionStorage
         parent::__construct($name, $metaBag);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function start(): bool
     {
         if ($this->started) {
@@ -60,7 +64,10 @@ class MockFileSessionStorage extends MockArraySessionStorage
         return true;
     }
 
-    public function regenerate(bool $destroy = false, ?int $lifetime = null): bool
+    /**
+     * {@inheritdoc}
+     */
+    public function regenerate(bool $destroy = false, int $lifetime = null): bool
     {
         if (!$this->started) {
             $this->start();
@@ -74,7 +81,7 @@ class MockFileSessionStorage extends MockArraySessionStorage
     }
 
     /**
-     * @return void
+     * {@inheritdoc}
      */
     public function save()
     {
