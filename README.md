@@ -69,6 +69,11 @@ then
 composer dump-autoload
 ```
 
+Internal Server Error response: { "message": "Personal access client not found. Please create one.", "exception": "RuntimeException", "file" (truncated...)
+```
+php artisan passport:client --personal
+```
+
 ## API Documentation
 https://documenter.getpostman.com/view/16911064/2s93sZ5tfG#e3a68a5b-8492-4683-bcaf-5166f38eae80
 
